@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycom.mytrip.users.dao.FavoriteDao">
+
+	<insert id="favoriteInsert" parameterType="map">
+		insert into favorite (content_id, user_seq)
+		values( #{contentId}, #{userSeq})
+	</insert>
+	
+	<delete id="favoriteDelete" parameterType="map">
+        DELETE FROM favorite WHERE content_id = #{contentId} and user_seq = #{userSeq}
+    </delete>
+	
+	<select id="favoriteList" parameterType="map" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">		
+		select * from (select * from attraction_info ai
+		where ai.content_id in (
+			select content_id
+			from favorite
+			where user_seq = #{userSeq})) A left outer join 
+		(select * from favorite ) B
+		on A.content_id = B.content_id;
+	</select>
+
+	
+</mapper>

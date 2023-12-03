@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycom.mytrip.plan.dao.PlanDao">
+
+	<select id="plan" resultType="com.mycom.mytrip.plan.dto.PlanDto">
+		select *
+		  from plan
+		 where user_seq = #{userSeq}
+		 order by plan_id desc
+		 limit #{limit} offset #{offset}
+	</select>
+	
+	<select id="planDetail" resultType="com.mycom.mytrip.plan.dto.PlanDto">
+		select *
+		  from plan
+		 where plan_id = #{planId}
+	</select>
+
+	<select id="list" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">
+		select *
+		  from plan p, plan_list pl, attraction_info ai
+		 where p.plan_id = #{planId} and p.plan_id = pl.plan_id and pl.content_id = ai.content_id
+	</select>
+	
+	<insert id="insert">
+		insert into plan (user_seq, plan_title, content, budget, start_date, end_date)
+		values (#{userSeq}, #{planTitle}, #{content}, #{budget}, #{startDate}, #{endDate})
+	</insert>
+	
+	<update id="update">
+		update plan
+		   set plan_title = #{planTitle}
+		     , content = #{content}
+		     , budget = #{budget}
+		     , start_date = #{startDate}
+		     , end_date = #{endDate}
+		 where plan_id = #{planId}
+	</update>
+	
+	<delete id="deletePlan">
+		delete from plan
+		 where plan_id = #{planId};
+	</delete>
+	
+	<delete id="deletePlanForeign">
+		delete from plan_list
+		 where plan_id = #{planId};
+	</delete>
+	
+	<delete id="deletePlanList">
+		delete from plan_list
+		 where plan_list_id = #{planListId};
+	</delete>
+	
+	<insert id="insertPlanList">
+		insert into plan_list (plan_id, content_id, day)
+		values (#{planId}, #{contentId}, #{day})
+	</insert>
+</mapper>

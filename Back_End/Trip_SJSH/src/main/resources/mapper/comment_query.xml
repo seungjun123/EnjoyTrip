@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mycom.mytrip.comment.dao.CommentDao">
+
+	<select id="list" resultType="com.mycom.mytrip.comment.dto.CommentDto">
+		select *
+		  from comment
+		 where board_id = #{boardId}
+	</select>
+	
+	<insert id="insert" parameterType="com.mycom.mytrip.comment.dto.CommentDto">
+		insert into comment (board_id, user_seq, user_id, comment_content, comment_reg_dt)
+		values(#{boardId}, #{userSeq}, #{userId}, #{commentContent}, #{commentRegDt})
+	</insert>
+	
+	<update id="update" parameterType="com.mycom.mytrip.comment.dto.CommentDto">
+		update comment 
+		  set comment_content=#{commentContent} 
+		where comment_id=#{commentId}
+	</update>
+	
+	<!-- 유저 게시물 삭제 -->
+	<delete id="delete">
+		delete from comment
+		where comment_id=#{commentId}
+	</delete>
+
+</mapper>

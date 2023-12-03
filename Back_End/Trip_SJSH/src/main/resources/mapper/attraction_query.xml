@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mycom.mytrip.attraction.dao.AttractionDao">
+
+	<!-- 관광지 검색 -->
+	<select id="search" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">
+		select *
+		from attraction_info a
+		left outer join attraction_detail b
+		on a.content_id = b.content_id
+		<where>
+			a.content_id = b.content_id
+			<if test="sidoCode!=null">
+				and
+				sido_code = #{sidoCode}
+			</if>
+			<if test="gugunCode!=null">
+				and
+				gugun_code = #{gugunCode}
+			</if>
+			<if test="Cat1!=null">
+				and
+				cat1 = #{Cat1}
+			</if>
+			<if test="Cat2!=null">
+				and
+				cat2 = #{Cat2}
+			</if>
+			<if test="Cat3!=null">
+				and
+				cat3 = #{Cat3}
+			</if>
+			<if test="Title!=null">
+				and
+				title like concat('%', #{Title}, '%')
+			</if>
+		</where>
+	</select>
+	
+	<!-- 관광지 상세 검색 -->
+	<select id="detail" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">
+		select *
+		from attraction_info a
+		left outer join attraction_description b
+		on a.content_id = b.content_id
+		where a.content_id = #{a.contentId};
+	</select>
+	
+	<!-- 복수개의 파라미터가 필요할 경우 -->
+	<select id="attractionList" parameterType="map" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">
+		select *
+		from attraction_description ad, attraction_info ai
+		where ad.content_id = ai.content_id
+      	limit #{limit} offset #{offset} 
+      	
+	</select>
+	
+	<!-- 관광지 키워드 검색 -->
+	<select id="attractionListLike" parameterType="map" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">		
+		select * from (select ai.content_id, ai.title, ai.readcount, ai.addr1, ai.addr2, ai.zipcode, ai.tel, ai.first_image, ai.first_image2, ad.overview
+		from attraction_description ad, attraction_info ai
+		where ad.content_id = ai.content_id and  ai.addr1 like CONCAT('%',#{searchWord}, '%') )
+		A LEFT OUTER JOIN 
+		(select * 
+		from favorite where user_seq = #{userSeq}) 
+		B ON A.content_id = B.content_id
+		limit #{limit} offset #{offset} 
+	</select>
+	
+	<select id="attractionListLikeSelectOption" parameterType="map" resultType="com.mycom.mytrip.attraction.dto.AttractionDto">
+		select *
+		from attraction_info ai
+		where ai.title like CONCAT('%',#{searchWord}, '%')
+	</select>
+	
+</mapper>
